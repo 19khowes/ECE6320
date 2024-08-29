@@ -21,3 +21,18 @@ checkA3 = A3 * [1; -1; -1];
 colspA1 = colspace(sym(A1));
 colspA2 = colspace(sym(A2));
 colspA3 = colspace(sym(A3));
+
+%P9
+A2 = [1 0 1;5 2 1; 1 2 2];
+[V_A2, D_A2] = eig(A2);
+D_A2_hand = roots([-1 5 -5 10]);
+
+A3 = [2 1 1; 1 1 0;1 0 1];
+[V_A3, D_A3] = eig(A3);
+
+A4 = [4 5 1; 3 7 10; 1 0 1];
+[V_A4, D_A4] = eig(A4);
+D_A4_hand = roots([-1 12 -23 56]);
+
+A5 = [4 0 0; 0 7 0; 0 0 1];
+[V_A5, D_A5] = eig(A5)
