@@ -55,18 +55,19 @@ Acalc = [2 0 0; 2 2 2; 3 0 -1];
 [V_Ac, D_Ac] = eig(Acalc);
 
 % initial state is eigenvector of magnitude 5 (negative eigenvalue, u=0)
-SimulationScriptUnstable(5*V_Ac(:,2), @(t, x) 0);
+SimulationScriptUnstable(5*V_Ac(:,2), @(t, x) 0, 'Negative eigenvalue vector, u=0');
 
 % initial state is eigenvector of magnitude 5 (negative eigenvalue, u=1)
-SimulationScriptUnstable(5*V_Ac(:,2), @(t, x) 1);
+SimulationScriptUnstable(5*V_Ac(:,2), @(t, x) 1, 'Negative eigenvalue vector, u=1');
 
 % initial state is eigenvector of magnitude 5 (positive eigenvalue, u=0)
-SimulationScriptUnstable(5*V_Ac(:,1), @(t, x) 0);
+SimulationScriptUnstable(5*V_Ac(:,1), @(t, x) 0, 'Positive eigenvalue vector, u=0');
 
 % random initial state (u=0)
-SimulationScriptUnstable(rand([3 1]), @(t, x) 0);
+SimulationScriptUnstable(rand([3 1]), @(t, x) 0, 'Random eigenvalue vector, u=0');
 
 %% Nonlinear System Simulation
 close all
 clear variables
 PendulumCart
+SimulationScriptNonlinear

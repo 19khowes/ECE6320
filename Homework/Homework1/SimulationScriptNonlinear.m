@@ -1,8 +1,8 @@
 function SimulationScriptNonlinear()
     %% Initialize the simulation variables
     t0 = 0; % initial time
-    dt = 0.1; % time step
-    % dt = 0.01; % time step
+    % dt = 0.1; % time step
+    dt = 0.01; % time step
     tf = 10.0; % final time
         
     % Set the control input function

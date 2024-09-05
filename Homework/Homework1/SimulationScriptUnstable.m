@@ -1,4 +1,4 @@
-function SimulationScriptUnstable(x0, u)
+function SimulationScriptUnstable(x0, u, title)
     %% Initialize the simulation variables
     t0 = 0; % initial time
     dt = 0.1; % time step
@@ -17,6 +17,7 @@ function SimulationScriptUnstable(x0, u)
     
     % Plot the resulting states
     figure;
+    sgtitle(title);
     plotResults(tvec, xvec, uvec, 'b');
     
     %% Simulate and plot the system using Euler (or other method)
