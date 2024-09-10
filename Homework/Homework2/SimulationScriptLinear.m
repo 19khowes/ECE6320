@@ -1,4 +1,4 @@
-function SimulationScriptLinear(A, B, x0, u, xeq, title)
+function SimulationScriptLinear(A, B, dx0, xeq, du, ueq, title)
     %% Initialize the simulation variables
     t0 = 0; % initial time
     dt = 0.1; % time step
@@ -12,21 +12,21 @@ function SimulationScriptLinear(A, B, x0, u, xeq, title)
 
     %% Simulate and plot the system using ode
     % Simulate the system
-    [tvec, dxvec] = matlabOde45(A, B, x0, t0, dt, tf, u);
-    uvec = getControlVector(tvec, dxvec, u);
+    [tvec, dxvec] = matlabOde45(A, B, dx0, t0, dt, tf, du);
+    duvec = getControlVector(tvec, dxvec, du);
     
     % Plot the resulting states
     figure;
     sgtitle(title);
-    plotResults(tvec, dxvec, uvec, xeq, 'b');
+    plotResults(tvec, dxvec, xeq, duvec, ueq, 'b');
     
     %% Simulate and plot the system using Euler (or other method)
     % % Simulate the system
-    % [tvec, dxvec] = eulerIntegration(A, B, x0, t0, dt, tf, u);
-    % uvec = getControlVector(tvec, dxvec, u);
+    % [tvec, dxvec] = eulerIntegration(A, B, dx0, t0, dt, tf, du);
+    % uvec = getControlVector(tvec, dxvec, ueq);
     % 
     % % Plot the results
-    % plotResults(tvec, dxvec, uvec, xeq, 'r:');
+    % plotResults(tvec, dxvec, xeq, duvec, ueq, 'r:');
     
     
 end
@@ -135,7 +135,7 @@ function zdot = f(A, B, t, z, u)
     zdot = A*z + B*u;
 end
 
-function plotResults(tvec, dxvec, uvec, xeq, color)
+function plotResults(tvec, dxvec, xeq, duvec, ueq, color)
 
     % Plot variables
     fontsize = 18;
@@ -143,6 +143,7 @@ function plotResults(tvec, dxvec, uvec, xeq, color)
 
     % Update with equilibrium offset
     xvec = dxvec + xeq;
+    uvec = duvec + ueq;
     
     % Plot the resulting states
     subplot(3,1,1); hold on;

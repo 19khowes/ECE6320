@@ -22,7 +22,7 @@ function SimulationScriptNonlinear(f, x0, u, title)
     
     %% Simulate and plot the system using Euler (or other method)
     % % Simulate the system
-    % [tvec, dxvec] = eulerIntegration(x0, t0, dt, tf, u);
+    % [tvec, dxvec] = eulerIntegration(f, x0, t0, dt, tf, u);
     % uvec = getControlVector(tvec, dxvec, u);
     % 
     % % Plot the results
@@ -78,7 +78,7 @@ function [tvec, xvec] = matlabOde45(f, x0, t0, dt, tf, u)
     xvec = xvec';    
 end
 
-function [tvec, xvec] = eulerIntegration(x0, t0, dt, tf, u)
+function [tvec, xvec] = eulerIntegration(f, x0, t0, dt, tf, u)
     %eulerIntegration uses eulerIntegration to simulate the state starting at x0 from time
     % t0 to tf
     %
@@ -107,7 +107,7 @@ function [tvec, xvec] = eulerIntegration(x0, t0, dt, tf, u)
     x = x0;
     for i = 2:len % from 2nd state to the end of time vector
         t = tvec(i-1); % get time from previous index (for passing into f)
-        xdot = f(A, B, t, x, u(t, x)); % calculate first derivative at previous time, state, and input
+        xdot = f(t, x, u(t, x)); % calculate first derivative at previous time, state, and input
         
         x = x + dt * xdot; % new state gets old state plus the scaled derivative at old state
         xvec(:,i) = x; % concatenate new state vector

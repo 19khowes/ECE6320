@@ -24,21 +24,23 @@ eccheck = roots([1 156.8 -Ac(2,1)]);
 
 
 %% Simulation of Linearized System
-ueq = @(t,x) -g*l*m/(sqrt(2)); % equilibrium control input
+ueq = -g*l*m/(sqrt(2)); % equilibrium control input
 xeq = [pi/4; 0];
-SimulationScriptLinear(Ac, Bc, vc(:,2), ueq, xeq, 'Linear: Eigenvector - Negative Real Eigenvalue');
-SimulationScriptLinear(Ac, Bc, vc(:,1), ueq, xeq, 'Linear: Eigenvector - Positive Real Eigenvalue');
-SimulationScriptLinear(Ac, Bc, [(pi/4-0.05);0], ueq, xeq, 'Linear: theta = pi/4-0.05, thetadot = 0');
+du = @(t,x) 0; % linearized control input
+SimulationScriptLinear(Ac, Bc, vc(:,2), xeq, du, ueq, 'Linear: Eigenvector - Negative Real Eigenvalue');
+SimulationScriptLinear(Ac, Bc, vc(:,1), xeq, du, ueq, 'Linear: Eigenvector - Positive Real Eigenvalue');
+SimulationScriptLinear(Ac, Bc, [(pi/4-0.05);0]-xeq, xeq, du, ueq, 'Linear: theta = pi/4-0.05, thetadot = 0');
 
-SimulationScriptLinear(Ac, Bc, [0;0], @(t,x) -g*l*m/(sqrt(2)), xeq, 'Linear: theta = pi/4, thetadot = 0');
+% SimulationScriptLinear(Ac, Bc, xeq-xeq, xeq, du, ueq, 'Linear: theta = pi/4, thetadot = 0');
 
 %% Simulation of Nonlinear System
-f = @(t,x,u) [x(2); (g*sin(x(1)/l)-(b*x(2)/(m*l^2))+(u/(m*l^2)))]
+f = @(t,x,u) [x(2); ((g*sin(x(1))/l)-(b*x(2)/(m*l^2))+(u/(m*l^2)))];
+ueq = @(t,x) -g*l*m/(sqrt(2));
 SimulationScriptNonlinear(f, vc(:,2)+xeq, ueq, 'Nonlinear: Eigenvector - Negative Real Eigenvalue');
 SimulationScriptNonlinear(f, vc(:,1)+xeq, ueq, 'Nonlinear: Eigenvector - Positive Real Eigenvalue');
-SimulationScriptNonlinear(f, [(pi/4-0.05);0]+xeq, ueq, 'Nonlinear: theta = pi/4-0.05, thetadot = 0');
+SimulationScriptNonlinear(f, [(pi/4-0.005);0], ueq, 'Nonlinear: theta = pi/4-0.05, thetadot = 0');
 
-SimulationScriptNonlinear(f, [pi/4;0]+xeq, ueq, 'Nonlinear: theta = pi/4, thetadot = 0');
+% SimulationScriptNonlinear(f, [pi/4;0], ueq, 'Nonlinear: theta = pi/4, thetadot = 0');
 
 
 
