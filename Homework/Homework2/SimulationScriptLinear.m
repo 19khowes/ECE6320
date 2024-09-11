@@ -1,4 +1,4 @@
-function SimulationScriptLinear(A, B, dx0, xeq, du, ueq, title)
+function SimulationScriptLinear(A, B, dx0, xeq, du, ueq, title, location)
     %% Initialize the simulation variables
     t0 = 0; % initial time
     dt = 0.1; % time step
@@ -16,9 +16,17 @@ function SimulationScriptLinear(A, B, dx0, xeq, du, ueq, title)
     duvec = getControlVector(tvec, dxvec, du);
     
     % Plot the resulting states
-    figure;
+    fig1 = figure;
+    movegui(fig1, location);
     sgtitle(title);
     plotResults(tvec, dxvec, xeq, duvec, ueq, 'b');
+    title = strrep(title,' ','');
+    title = strrep(title,':','');
+    title = strrep(title,'-','');
+    title = strrep(title,'=','');
+    title = strrep(title,'.','');
+    title = strrep(title,'/','');
+    saveas(fig1, strcat(title, '.png'));
     
     %% Simulate and plot the system using Euler (or other method)
     % % Simulate the system

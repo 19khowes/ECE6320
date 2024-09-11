@@ -1,4 +1,4 @@
-function SimulationScriptNonlinear(f, x0, u, title)
+function SimulationScriptNonlinear(f, x0, u, title, location)
     %% Initialize the simulation variables
     t0 = 0; % initial time
     dt = 0.1; % time step
@@ -16,9 +16,17 @@ function SimulationScriptNonlinear(f, x0, u, title)
     uvec = getControlVector(tvec, xvec, u);
     
     % Plot the resulting states
-    figure;
+    fig1 = figure;
+    movegui(fig1, location);
     sgtitle(title);
     plotResults(tvec, xvec, uvec, 'b');
+    title = strrep(title,' ','');
+    title = strrep(title,':','');
+    title = strrep(title,'-','');
+    title = strrep(title,'=','');
+    title = strrep(title,'.','');
+    title = strrep(title,'/','');
+    saveas(fig1, strcat(title, '.png'));
     
     %% Simulate and plot the system using Euler (or other method)
     % % Simulate the system
