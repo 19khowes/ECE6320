@@ -6,26 +6,21 @@ close all;
 % 8.6
 syms t real
 syms t0 real
-Phit = [exp(t)*cos(2*t) exp(-2*t)*sin(2*t); -exp(t)*sin(2*t) exp(-2*t)*cos(2*t)];
-Phit0 = [exp(t0)*cos(2*t0) exp(-2*t0)*sin(2*t0); -exp(t0)*sin(2*t0) exp(-2*t0)*cos(2*t0)];
-Phi = simplify(Phit*(Phit0^-1));
+Phif = @(t) [exp(t)*cos(2*t) exp(-2*t)*sin(2*t); -exp(t)*sin(2*t) exp(-2*t)*cos(2*t)];
+Phi_t = Phif(t);
+Phi_t0 = Phif(t0);
+Phi_t_t0 = simplify(Phi_t*(Phi_t0^-1));
 
-dPhi = simplify(diff(Phi,t));
+% choosing tao = 0 to compute A
+dPhi_t = simplify(diff(Phi_t,t));
+A = simplify(dPhi_t*(Phi_t^-1));
 
-
-t0 = 0;
-Phit = [exp(t)*cos(2*t) exp(-2*t)*sin(2*t); -exp(t)*sin(2*t) exp(-2*t)*cos(2*t)];
-Phit0 = [exp(t0)*cos(2*t0) exp(-2*t0)*sin(2*t0); -exp(t0)*sin(2*t0) exp(-2*t0)*cos(2*t0)];
-Phi = simplify(Phit*(Phit0^-1));
-dPhi = simplify(diff(Phi,t));
-A = simplify((Phi^-1)*dPhi);
-
-A = [(-1/2)+(3/2)*cos(4*t) 2-(3/2)*sin(4*t); -2-(3/2)*sin(4*t) (-1/2)-(3/2)*cos(4*t)]; % from homework answer, replace with own code
+% A = [(-1/2)+(3/2)*cos(4*t) 2-(3/2)*sin(4*t); -2-(3/2)*sin(4*t) (-1/2)-(3/2)*cos(4*t)]; % from homework answer, replace with own code
 syms lam
 Alam = lam*eye(height(A))-A;
 charPolyA = det(Alam);
 eigA = roots([1 1 2]);
-eigAcheck = eig(A);
+eigAcheck = simplify(eig(A));
 
 % 8.12
 % a
