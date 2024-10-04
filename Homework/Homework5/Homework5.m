@@ -86,7 +86,7 @@ P = lyap(A1', Q);
 eigP = eig(P);
 mu = -1*(min(eig(Q))/max(eigP));
 
-% finding a better Q (brute force style check for fun, didn't work?)
+% finding a better Q (brute force style check for fun, didn't work? maybe due to numerical integration error with mu <-200)
 % bestMu = mu;
 % bestQ = Q;
 % bestP = P;
