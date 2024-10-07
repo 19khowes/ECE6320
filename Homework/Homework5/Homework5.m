@@ -87,40 +87,42 @@ eigP = eig(P);
 mu = -1*(min(eig(Q))/max(eigP));
 
 % finding a better Q (brute force style check for fun, didn't work? maybe due to numerical integration error with mu <-200)
-% bestMu = mu;
-% bestQ = Q;
-% bestP = P;
-% for i = 1:1:100
-%     for j = 1:1:100
-%         for k = 1:1:100
-%             Q = [i j; 0 k];
-%             P = lyap(A1', Q);
-%             new_mu = -1*min(eig(Q))/max(eig(P));
-%             if (new_mu < bestMu && (min(eig(P)) > 0) && (sum((real(eig(P))~=eig(P))) == 0) )
-%                 bestMu = new_mu;
-%                 bestQ = Q;
-%                 bestP = P;
-%             end
-%         end
-%     end
-% end
-% mu = bestMu;
-% P = bestP;
-% Q = bestQ;
+bestMu = mu;
+bestQ = Q;
+bestP = P;
+mulist = zeros([100 100]);
+for i = 1:1:100
+    for j = 1:1:100
+        Q = [i 0; 0 j];
+        Q = [1 i; i j];
+        P = lyap(A1', Q);
+        new_mu = -1*min(eig(Q))/max(eig(P));
+        mulist(i,j) = new_mu;
+        if (new_mu < bestMu && (min(eig(P)) > 0) && (sum((real(eig(P))~=eig(P))) == 0) )
+            bestMu = new_mu;
+            bestQ = Q;
+            bestP = P;
+        end
+    end
+end
+mu = bestMu;
+P = bestP;
+Q = bestQ;
 
-% try a few Q's
-Q = [1 1; 0 1];
+% pick Q from above
+Q = [1 0; 0 1];
 P = lyap(A1', Q);
 mu = -1*min(eig(Q))/max(eig(P));
 eig(P)
 
 % b Simulate nonlinear system
 xeq = [pi; 0];
-dx_0 = [0.01; 0.75];
+dx_0 = [0.01; 0.75]; % starting state for delta_x
 % convert dx_0 to x_0 for simulation
 x_0 = dx_0 + xeq;
 [tvec, xvec] = ode45(@(t,x) fnonlinear(t,x), [0 20], x_0);
 xvec = xvec';
+
 
 % back to dx
 xvec = xvec - xeq;
@@ -162,7 +164,7 @@ legend(["Linear dynamics", "Bounding function"]);
 %% Lyapunov equation
 % Problem 1
 % check if Q is positive definite
-Q_1 = [1 2; 0 3];
+Q_1 = [1 0; 0 3];
 eigQ_1 = eig(Q_1);
 % check if resulting Ps are positive definite
 P1 = [4.5 -0.866; -0.866 3.5]; P2 = [4.5 -0.866; 0.866 3.5];
