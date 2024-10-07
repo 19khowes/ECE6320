@@ -16,7 +16,7 @@ function SatelliteSimulation()
     % Initialize sim variables
     t0 = 0; % initial time
     dt = 0.01; % time step
-    tf = 50.0; % final time    
+    tf = 10.0; % final time    
     
     % Calculate the feedback matrix
     K = SatelliteControlDesign(P.R_des);
