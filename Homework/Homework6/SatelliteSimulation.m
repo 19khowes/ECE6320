@@ -48,7 +48,7 @@ function u = input(t, x, K, P)
 %       .R_des: Desired radius
 %       (anything else you want to have in it)
 
-    u = [0;0];
+    % u = [0;0];
     xd = getDesiredState(t,x,P);
     u = -K*(x-xd);
 end
