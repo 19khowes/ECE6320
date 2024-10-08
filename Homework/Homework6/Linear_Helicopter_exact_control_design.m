@@ -12,7 +12,11 @@ close all;
     P = getSystemMatrices();
         
     % Set the control input function
-    u = @(t,x) zeros(4,1);    
+    % a = expm(P.A*(t1+t2-tau))*P.B*(P.B')
+    integrand = @(tau) expm(P.A*(t1+t2-tau))*P.B*(P.B')*(expm(P.A*(t1+t2-tau))');
+    Wr = integral(integrand,0,t1+t2, 'ArrayValued',1);
+    u = @(t,x) (P.B')*expm(P.A*(t1+t2-t))'*(Wr^-1)*(x2-expm(P.A*(t1+t2))*x1);
+    % u = @(t,x) zeros(4,1);    
     
     %% Initialize the simulation variables
     % Time variables
@@ -23,7 +27,7 @@ close all;
     
     % set initial conditions:
     x0 = x1;
-    %x0 = rand(8,1);
+    % x0 = rand(8,1);
     
     %% Simulate and plot the system using ode
     % Simulate the system          
