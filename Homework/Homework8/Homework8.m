@@ -91,7 +91,7 @@ a2 = chiA(3);
 C = ctrb(A,B);
 T = C*[1 a1 a2; 0 1 a1; 0 0 1];
 Ahat = T^-1*A*T;
-Bhat = T^-1*B;W
+Bhat = T^-1*B;
 
 
 

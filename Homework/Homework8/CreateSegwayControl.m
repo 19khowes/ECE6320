@@ -89,10 +89,12 @@ rGamma = rank(Gamma);
 %% why z can be controlled in isolation (controllability decomp)
 T = eye(size(A));
 T = fliplr(T);
-T(:,[6 7]) = T(:, [7 6]);
+% T(:,[6 7]) = T(:, [7 6]);
+T = [0 0 0 0 1 0 0; 0 0 0 0 0 0 1; 0 0 0 0 0 1 0; 1 0 0 0 0 0 0; 0 1 0 0 0 0 0; 0 0 1 0 0 0 0; 0 0 0 1 0 0 0]
 
 Ahat = T^-1*A*T
 Bhat = T^-1*B
+Xhat = T^-1*X;
 
 %% Linearize Equations about z = 0 (Note, you will want to comment out the previous section so that you 
 %%                                  are still working with symbolic variables at this point)
