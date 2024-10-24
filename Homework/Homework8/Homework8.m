@@ -38,8 +38,9 @@ Chat = C*T;
 Dhat = D;
 syms s;
 Ahat = round(Ahat);
-G1 = simplify(C*((s*eye(2)-A)^-1)*B);
-G2 = simplify(Chat*((s*eye(2)-Ahat)^-1)*Bhat);
+G1 = simplify(C*((s*eye(2)-A)^-1)*B+D);
+G2 = simplify(Chat*((s*eye(2)-Ahat)^-1)*Bhat+Dhat);
+
 
 % Control Design Review
 % A
@@ -66,15 +67,31 @@ rGamma_C = rank(Gamma);
 v = orth(Gamma);
 w = null(Gamma');
 T = [v w];
-Ahat = T^-1*A*T
-Bhat = T^-1*B
+Ahat = T^-1*A*T;
+Bhat = T^-1*B;
 
 syms k1 k2;
 Abar = A-B*[k1 k2];
 Abar = subs(Abar,[k1 k2],[0 4]);
 eigAbar = eig(Abar);
 
+%% extra credit
+syms a1 a2 a3 A B
+C = [B A*B A^2*B];
+T1 = [1 a1 a2; 0 1 a1; 0 0 1];
+lh = A*C*T1;
+rh1 = [-a1 -a2 -a3; 1 0 0; 0 1 0];
+rh = C*T1*rh1;
 
+A = [6 4 1; -5 -4 0; -4 -3 -1];
+B = [1; -1; -1];
+chiA = poly(A);
+a1 = chiA(2);
+a2 = chiA(3);
+C = ctrb(A,B);
+T = C*[1 a1 a2; 0 1 a1; 0 0 1];
+Ahat = T^-1*A*T;
+Bhat = T^-1*B;W
 
 
 
