@@ -18,13 +18,16 @@ function control_design_system_1()
     T = [v w];
     Ahat = T^-1*A*T;
     Bhat = T^-1*B;
-    controlDim = 3; % size of Ahat_11 (number of placeable eigenvalues)
-    Q = diag(1:controlDim);
+    Au = Ahat(rGamma+1:n,rGamma+1:n);
+    disp("Uncontrolled portion of Ahat has eigenvalues of ");
+    eigAu = eig(Au)
+    disp("System 1 is stabilizable");
+    Q = diag(1:rGamma);
     R = diag(1:m);
-    Ac = Ahat(1:controlDim,1:controlDim); % controllable portion of Ahat
-    Bc = Bhat(1:controlDim,:); % controllable portion of Bhat
+    Ac = Ahat(1:rGamma,1:rGamma); % controllable portion of Ahat
+    Bc = Bhat(1:rGamma,:); % controllable portion of Bhat
     Khat = lqr(Ac, Bc, Q, R); % control for controllable portion
-    Khat = [Khat zeros([m n-controlDim])];
+    Khat = [Khat zeros([m n-rGamma])];
     K = Khat*T^-1
     Abar = A-B*K;
     eigAbar = eig(Abar)
@@ -33,13 +36,56 @@ end
 function control_design_system_2()
     % Get system
     [A, B] = get_system2();
-    display("Create your controller for system 2");    
+    display("Create your controller for system 2");   
+    n = height(A);
+    m = width(B);
+    Gamma = ctrb(A,B);
+    rGamma = rank(Gamma); % rank of Gamma is 4 ~= 5 (not fully controllable)
+    v = orth(Gamma);
+    w = null(Gamma');
+    T = [v w];
+    Ahat = T^-1*A*T
+    Bhat = T^-1*B;
+    Au = Ahat(rGamma+1:n,rGamma+1:n);
+    disp("Uncontrolled portion of Ahat has eigenvalues of ");
+    eigAu = eig(Au)
+    disp("System 2 is NOT stabilizable");
+    % Q = diag(1:rGamma);
+    % R = diag(1:m);
+    % Ac = Ahat(1:rGamma,1:rGamma); % controllable portion of Ahat
+    % Bc = Bhat(1:rGamma,:); % controllable portion of Bhat
+    % Khat = lqr(Ac, Bc, Q, R); % control for controllable portion
+    % Khat = [Khat zeros([m n-rGamma])];
+    % K = Khat*T^-1
+    % Abar = A-B*K;
+    % eigAbar = eig(Abar)
 end
 
 function control_design_system_3()
     % Get system
     [A, B] = get_system3();
-    display("Create your controller for system 3");    
+    display("Create your controller for system 3"); 
+    n = height(A);
+    m = width(B);
+    Gamma = ctrb(A,B);
+    rGamma = rank(Gamma); % rank of Gamma is 4 ~= 5 (not fully controllable)
+    v = orth(Gamma);
+    w = null(Gamma');
+    T = [v w];
+    Ahat = T^-1*A*T
+    Bhat = T^-1*B;
+    Au = Ahat(rGamma+1:n,rGamma+1:n);
+    disp("Uncontrolled portion of Ahat has eigenvalues of ");
+    eigAu = eig(Au)
+    Q = diag(1:rGamma);
+    R = diag(1:m);
+    Ac = Ahat(1:rGamma,1:rGamma); % controllable portion of Ahat
+    Bc = Bhat(1:rGamma,:); % controllable portion of Bhat
+    Khat = lqr(Ac, Bc, Q, R); % control for controllable portion
+    Khat = [Khat zeros([m n-rGamma])];
+    K = Khat*T^-1
+    Abar = A-B*K;
+    eigAbar = eig(Abar)
 end
 
 
