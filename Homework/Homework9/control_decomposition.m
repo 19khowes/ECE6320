@@ -20,7 +20,7 @@ function control_design_system_1()
     Bhat = T^-1*B;
     Au = Ahat(rGamma+1:n,rGamma+1:n);
     disp("Uncontrolled portion of Ahat has eigenvalues of ");
-    eigAu = eig(Au)
+    eigAu = eig(Au);
     disp("System 1 is stabilizable");
     Q = diag(1:rGamma);
     R = diag(1:m);
@@ -44,11 +44,11 @@ function control_design_system_2()
     v = orth(Gamma);
     w = null(Gamma');
     T = [v w];
-    Ahat = T^-1*A*T
+    Ahat = T^-1*A*T;
     Bhat = T^-1*B;
     Au = Ahat(rGamma+1:n,rGamma+1:n);
     disp("Uncontrolled portion of Ahat has eigenvalues of ");
-    eigAu = eig(Au)
+    eigAu = eig(Au);
     disp("System 2 is NOT stabilizable");
     % Q = diag(1:rGamma);
     % R = diag(1:m);
@@ -72,7 +72,7 @@ function control_design_system_3()
     v = orth(Gamma);
     w = null(Gamma');
     T = [v w];
-    Ahat = T^-1*A*T
+    Ahat = T^-1*A*T;
     Bhat = T^-1*B;
     Au = Ahat(rGamma+1:n,rGamma+1:n);
     disp("Uncontrolled portion of Ahat has eigenvalues of ");
