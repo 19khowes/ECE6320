@@ -16,9 +16,9 @@ A = [0 1; g/l (-b/(m*l^2))];
 B = [0; 1/(m*l^2)];
 xd = xeq;
 xddot = [0;0];
-syms uff
-eqn = B*uff+A*xd-xddot==0;
-uff_sol = double(solve(eqn,uff));
+% syms uff
+% eqn = B*uff+A*xd-xddot==0;
+% uff_sol = double(solve(eqn,uff));
 % uff = 0; % TODO; replace with some solve for uff?
 Gamma = ctrb(A,B);
 rGamma = rank(Gamma);
@@ -26,8 +26,8 @@ Q = diag(1:rGamma);
 R = diag(1:width(B));
 K = lqr(A, B, Q, R); % control for controllable portion
 Abar = A-B*K;
-S02_L03_PendulumEnergy([0.1;0],xeq,ueq,uff_sol,K)
-S02_L03_PendulumEnergy([(pi/4-0.1);0],xeq,ueq,uff_sol,K)
+S02_L03_PendulumEnergy([0.1;0],xeq,ueq,K)
+S02_L03_PendulumEnergy([(pi-0.1);0],xeq,ueq,K)
 
 % c
 xeq = [pi/4;0]; ueq = -g*l*m/sqrt(2);
@@ -45,8 +45,8 @@ Q = diag(1:rGamma);
 R = diag(1:width(B));
 K = lqr(A, B, Q, R); % control for controllable portion
 Abar = A-B*K
-S02_L03_PendulumEnergy([pi/4;0],xeq,ueq,uff_sol,K)
-S02_L03_PendulumEnergy([0;0],xeq,ueq,uff_sol,K)
+S02_L03_PendulumEnergy([pi/4-0.1;0],xeq,ueq,K)
+S02_L03_PendulumEnergy([pi-0.1;0],xeq,ueq,K)
 
 
 

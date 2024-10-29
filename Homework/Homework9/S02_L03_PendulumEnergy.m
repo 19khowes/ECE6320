@@ -1,21 +1,23 @@
-function S02_L03_PendulumEnergy(x0,xeq,ueq,uff,K)
+function S02_L03_PendulumEnergy(x0,xeq,ueq,K)
     % Define parameters
     P.g = 9.8; % Gravity constant
     P.l = 0.25; % Pendulum length
     P.m = 1/9.8; % Pendulum mass
-    P.b = 0.1; % Friction coefficient
-    
+    % P.b = 0.1; % Friction coefficient
+    P.b = 1; % Friction coefficient
+
     % Simulate the state forward in time the state
     
     dt = 0.01;
     t = [0:dt:10];
     xd = xeq;
-    u = @(t,x,P) ueq-K*x+K*xeq+K*xd+uff;
+    u = @(t,x,P) ueq-K*(x-xeq);
 
     [tmat, xmat] = ode45(@(t,x)f(t,x,u, P), t, x0);
     tmat = tmat';
     xmat = xmat';
     umat = getControlVector(tmat, xmat, u);
+    Tmat = min(1,max(-1,umat));
     
     % Calculate the energy
     len = length(tmat);
@@ -41,8 +43,8 @@ function S02_L03_PendulumEnergy(x0,xeq,ueq,uff,K)
 
     % Plot the input
     subplot(3,1,3);
-    plot(tmat, umat, 'b', 'linewidth', 3);
-    ylabel('$u(t)$', 'fontsize', fontsize, 'Interpreter','latex');
+    plot(tmat, Tmat, 'b', 'linewidth', 3);
+    ylabel('$T(t)$', 'fontsize', fontsize, 'Interpreter','latex');
     set(gca, 'fontsize', fontsize);
     
     % % Plot the energy
@@ -91,7 +93,7 @@ function xdot = f(t,x, u_function, P)
     
     % Threshold the control input
     T = max(-1, u);
-    T = min(1, u);
+    T = min(1, T);
     
     % Extract state
     theta = x(1);
