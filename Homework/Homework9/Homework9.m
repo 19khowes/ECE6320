@@ -60,8 +60,14 @@ rGamma = rank(Gamma);
 K = lqr(A,B,diag(1:height(A)), 1); % control law for uhat
 Abar = (A-B*K); % checking stabilization worked
 eigAbar = eig(Abar);
-
 % b
+A = [0 1 0; 0 0 1; 0 0 (-b)/(m*l^2)]
+B = [0; 0; -1]
+rGamma = rank(ctrb(A,B))
+K = lqr(A,B,diag(1:rGamma),diag(1:width(B)))
+Abar = A-B*K
+eigAbar = eig(Abar)
+
 
 %% Cart-Pendulum
 % These variables are described at http://ctms.engin.umich.edu/CTMS/index.php?example=InvertedPendulum&section=SystemModeling
