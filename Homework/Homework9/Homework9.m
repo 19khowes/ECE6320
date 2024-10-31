@@ -26,6 +26,7 @@ Q = diag(1:rGamma);
 R = diag(1:width(B));
 K = lqr(A, B, Q, R); % control for controllable portion
 Abar = A-B*K;
+eigAbar = eig(Abar);
 S02_L03_PendulumEnergy([0.1;0],xeq,ueq,K)
 S02_L03_PendulumEnergy([(pi-0.1);0],xeq,ueq,K)
 
@@ -45,6 +46,7 @@ Q = diag(1:rGamma);
 R = diag(1:width(B));
 K = lqr(A, B, Q, R); % control for controllable portion
 Abar = A-B*K;
+eigAbar = eig(Abar);
 S02_L03_PendulumEnergy([pi/4-0.1;0],xeq,ueq,K);
 S02_L03_PendulumEnergy([pi-0.1;0],xeq,ueq,K);
 
