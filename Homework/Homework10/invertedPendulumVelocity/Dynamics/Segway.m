@@ -64,7 +64,10 @@ classdef Segway < handle
             %with the linearized system matrices (A,B)
             
             % Place holder: zero control
-            K = zeros(obj.n, size(obj.B, 2));
+            % K = zeros(obj.n, size(obj.B, 2));
+
+            % actual K
+            K = lqr(obj.A,obj.B,diag(1:height(obj.A)),diag(1:width(obj.B)));
         end
         
         function [u1, u2] = calculateFeedbackControl(obj, t, x)
@@ -77,6 +80,21 @@ classdef Segway < handle
             % Placeholder: zero control
             u1 = 0;
             u2 = 0;
+
+            % actual control
+            zd = [obj.omega_d; obj.v_d; 0; 0];
+            % syms uff1 uff2;
+            % uff = [uff1; uff2];
+            % eqn = obj.B*uff + obj.A*zd == 0;
+            % uff_sol = solve(eqn,uff);
+            % uff_sol = double([uff_sol.uff1; uff_sol.uff2]);
+
+            % u = -obj.K*z; % add/subtract desired?
+
+            % u = uff_sol - obj.K*(z-zd);
+            u = -obj.K*(z-zd);
+            u1 = u(1);
+            u2 = u(2);
         end        
     end
     
