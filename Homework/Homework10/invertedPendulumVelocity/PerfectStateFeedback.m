@@ -19,7 +19,7 @@ function PerfectStateFeedback()
     seg = Segway(vd, omegad);
     
     % Simulate control
-    t = 0:.01:20;
+    t = 0:.01:200;
     [tvec, xvec] = ode45(@(t, x)seg.dynamicsWithoutObserver(t, x), t, x0);
     xvec = xvec'; % reshape to have each state be a column
     
