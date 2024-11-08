@@ -21,8 +21,7 @@ u = @(t,x,P) u_function(t,x,P);
 [tmat, xmat] = ode45(@(t,x)f(t,x,u,P), t, x0);
 tmat = tmat';
 xmat = xmat';
-% umat = getControlVector(tmat, xmat, u);
-% Tmat = min(1,max(-1,umat));
+umat = getControlVector(tmat, xmat, u, P);
 
 %% Plot the results
 fontsize = 12;
@@ -54,6 +53,18 @@ plot(tmat, xmat(5,:), 'b', 'linewidth', 3);
 ylabel('$w_l(t)$', 'fontsize', fontsize, 'Interpreter','latex');
 set(gca, 'fontsize', fontsize);
 
+% Plot the input
+figure;
+subplot(2,1,1);
+plot(tmat, umat(1,:), 'b', 'linewidth', 3);
+ylabel('$\dot{w_r}(t)$', 'fontsize', fontsize, 'Interpreter','latex');
+set(gca, 'fontsize', fontsize);
+
+subplot(2,1,2);
+plot(tmat, umat(2,:), 'b', 'linewidth', 3);
+ylabel('$\dot{w_l}(t)$', 'fontsize', fontsize, 'Interpreter','latex');
+set(gca, 'fontsize', fontsize);
+
 %% input
 function abar = u_function(t,x,P)
     r = P.r;
@@ -65,13 +76,16 @@ function abar = u_function(t,x,P)
     wr = x(4);
     wl = x(5);
 
+    M = [r/2 r/2; r/L -r/L];
+
     v = (r/2)*(wr+wl);
     w = (r/L)*(wr-wl);
     
     z = [q1+P.ep*cos(theta);
          q2+P.ep*sin(theta);
-         v*cos(theta)+P.ep*w*sin(theta);
+         v*cos(theta)-P.ep*w*sin(theta);
          v*sin(theta)+P.ep*w*cos(theta);];
+    % z = [q1;q2;0;0];
 
     zd = [sin(t); t; cos(t); 1];
     
@@ -81,6 +95,25 @@ function abar = u_function(t,x,P)
     what = [0 -P.ep*w; w/P.ep 0];
     vbar = [v; w];
     abar = Re^-1*u - what*vbar;
+    abar = M^-1 * abar;
+end
+
+function u_vec = getControlVector(tvec, xvec, u, P)
+%getControlVector calculate the control vector over the specified time
+%interval and state
+%
+% Inputs:
+%   tvec: 1xm vector of time inputs
+%   xvec: nxm matrix of states
+%   u: function handle that takes time and state as inputs and outputs
+%   the control input
+
+    len = size(tvec, 2);
+    u_vec = zeros(2, len);
+    for k = 1:len
+        u_vec(:,k) = u(tvec(k), xvec(:,k), P);
+    end
+
 end
 
 %% dynamics
@@ -101,3 +134,4 @@ function xdot = f(t,x,u_function,P)
 
     xdot = [v*cos(theta); v*sin(theta); w; u(1); u(2)];
 end
+
