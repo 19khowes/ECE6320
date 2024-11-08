@@ -3,12 +3,13 @@ clear; close all;
 x0 = [0; 0; 0; 0; 0];
 
 % Define parameters
-P.r = 3;
-P.L = 5;
+P.r = 1;
+P.L = 2;
+P.ep = 1;
 P.A = [0 0 1 0; 0 0 0 1; 0 0 0 0; 0 0 0 0];
 P.B = [0 0; 0 0; 1 0; 0 1];
 P.K = place(P.A,P.B,[-1 -2 -3 -4]);
-P.ep = 100;
+
 % Simulate the state forward in time the state
 
 dt = 0.01;
@@ -23,20 +24,29 @@ tmat = tmat';
 xmat = xmat';
 umat = getControlVector(tmat, xmat, u, P);
 
+y_ep = xmat(1:2,:) + P.ep*[cos(xmat(3,:)); sin(xmat(3,:))];
+qd = [sin(t); t];
+
 %% Plot the results
 fontsize = 12;
 
 % Plot the states
 figure;
 subplot(5,1,1);
-plot(tmat, xmat(1,:), 'b', 'linewidth', 3);
-ylabel('$x_1(t)$', 'fontsize', fontsize, 'Interpreter','latex');
+plot(tmat, xmat(1,:), 'b', 'linewidth', 3); hold on;
+plot(tmat, y_ep(1,:), '--r', 'linewidth', 2);
+plot(tmat, qd(1,:), '--g', 'linewidth', 2);
+ylabel('$x_1(t)$, $x_{\epsilon 1}(t)$, $q_{d1}(t)$', 'fontsize', fontsize, 'Interpreter','latex');
 set(gca, 'fontsize', fontsize);
+legend('x_1', 'x_{\epsilon 1}', 'q_{d1}')
 
 subplot(5,1,2);
-plot(tmat, xmat(2,:), 'b', 'linewidth', 3);
-ylabel('$x_2(t)$', 'fontsize', fontsize, 'Interpreter','latex');
+plot(tmat, xmat(2,:), 'b', 'linewidth', 3); hold on;
+plot(tmat, y_ep(2,:), '--r', 'linewidth', 2);
+plot(tmat, qd(2,:), '--g', 'linewidth', 2);
+ylabel('$x_2(t)$, $x_{\epsilon 2}(t)$, $q_{d2}(t)$', 'fontsize', fontsize, 'Interpreter','latex');
 set(gca, 'fontsize', fontsize);
+legend('x_2', 'x_{\epsilon 2}', 'q_{d2}')
 
 subplot(5,1,3);
 plot(tmat, xmat(3,:), 'b', 'linewidth', 3);
@@ -76,24 +86,23 @@ function abar = u_function(t,x,P)
     wr = x(4);
     wl = x(5);
 
-    M = [r/2 r/2; r/L -r/L];
-
     v = (r/2)*(wr+wl);
     w = (r/L)*(wr-wl);
-    
+
+    M = [r/2 r/2; r/L -r/L];
+    Re = [cos(theta) -P.ep*sin(theta); sin(theta) P.ep*cos(theta)];
+    what = [0 -P.ep*w; w/P.ep 0];
+    vbar = [v; w];
+
     z = [q1+P.ep*cos(theta);
          q2+P.ep*sin(theta);
          v*cos(theta)-P.ep*w*sin(theta);
          v*sin(theta)+P.ep*w*cos(theta);];
-    % z = [q1;q2;0;0];
 
     zd = [sin(t); t; cos(t); 1];
     
     u = [-sin(t); 0] - P.K*(z-zd);
 
-    Re = [cos(theta) -P.ep*sin(theta); sin(theta) P.ep*cos(theta)];
-    what = [0 -P.ep*w; w/P.ep 0];
-    vbar = [v; w];
     abar = Re^-1*u - what*vbar;
     abar = M^-1 * abar;
 end
