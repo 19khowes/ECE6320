@@ -23,17 +23,19 @@ eigAkc = eig(A+newk*c); % check
 A = [-5 0 0; 0 3 0; 0 2 1];
 B = [0 0; 0 1; 1 0];
 C = [0 0 1; -1 0 0];
-syms k11 k12 k21 k22;
-K = [k11 k12; k21 k22];
-Ahat = A-B*K*C;
-chi = charpoly(Ahat)
-r = roots(chi);
-solK = solve(r==[-5;-1;-1])
-newK = [solK.k11 0; solK.k21 0];
-A
-% maxX = [5; 3; 1];
-% maxU = [10; 1];
-% Q = diag(1./(maxX.^2)); % Bryson's method
-% R = diag(1./(maxU.^2));
-% newK = lqr(A,B,Q,R)
+xd = [0;1;0];
+syms u1 u2;
+uff = [u1;u2];
+eqn = B*uff + A*xd == 0;
+uff_sol = solve(eqn,uff);
+uff_sol = double([uff_sol.u1, uff_sol.u2]);
+rGamma = rank(ctrb(A,B)); % check controllability
+maxX = [5; 3; 1];
+maxU = [10; 1];
+Q = diag(1./(maxX.^2)); % Bryson's method
+R = diag(1./(maxU.^2));
+K = lqr(A,B,Q,R)
+L = place(A',C',[-100, -200, -300])'
+
+
 
