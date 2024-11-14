@@ -68,7 +68,7 @@ classdef Segway < handle
 
             % actual K
             % K = lqr(obj.A,obj.B,diag(1:height(obj.A)),diag(1:width(obj.B)))
-            K = place(obj.A,obj.B,[-1 -2 -3 -4]) % provides faster convergence
+            K = place(obj.A,obj.B,[-1 -2 -3 -4]); % provides faster convergence
         end
         
         function [u1, u2] = calculateFeedbackControl(obj, t, x)
