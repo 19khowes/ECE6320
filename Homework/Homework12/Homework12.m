@@ -6,7 +6,10 @@ close all;
 Modified2_1;
 
 %% LQR (Bryson's Method)
-LQRBryson;
+S = diag([1/10^2 1/1^2 1/2^2]);
+LQRBryson(S, 'first');
+S = diag([10 1 0.25]);
+LQRBryson(S, 'second');
 
 %% 2.3
 A = [0 1; 1 0]; B = [0; 1];

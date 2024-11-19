@@ -1,7 +1,7 @@
 function decomposition_problem()
     % Create system
-    [A, B, C] = get_system()
-    x_d = [-10/3; 3; -3; 43/12; 0]
+    [A, B, C] = get_system();
+    x_d = [-10/3; 3; -3; 43/12; 0];
 
     % find uff
     syms u1 u2 u3;
@@ -29,7 +29,7 @@ function decomposition_problem()
     padding = zeros([m n-rGamma]);
     Khat = [K1hat padding];
     K = Khat*T^-1;
-    closeEigK = eig(A-B*K)
+    closeEigK = eig(A-B*K);
 
     % observer design
     Omega = obsv(A,C);
