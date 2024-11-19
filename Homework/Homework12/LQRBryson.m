@@ -94,11 +94,7 @@ function LQRBryson(S, name)
     plotStates(tmat45', xmat45', color, linewidth, fontsize);
     color = 'r:';
     plotStates(tmat45', xmatEuler, color, linewidth, fontsize);
-    legend('ode45', 'Euler');
-    
-    
-   
-    
+    legend('ode45', 'Euler');    
 end
 
 

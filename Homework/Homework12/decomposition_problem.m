@@ -44,6 +44,89 @@ function decomposition_problem()
     Lhat = [L1hat; padding];
     L = T*Lhat;
     closeEigL = eig(A-L*C);
+
+    P.A = A; P.B = B; P.C = C; P.K = K; P.L = L;
+    P.xd = x_d; P.uff = uff;
+    simulate(P);
+end
+
+function simulate(P)
+    n = height(P.A);
+    % initial conditions
+    x0 = zeros([n 1]); % state
+    xhat0 = ones([n 1]); % state estimate
+    
+    % Simulate forward in time
+    t = 0:0.01:10;
+    [tvec,xvec] = ode45(@(t,x)f(t,x,P), t, [x0; xhat0]);
+    tvec = tvec'; xvec = xvec';
+    
+    % Plot 
+    figure;
+    sgtitle("Output Feedback w/ Decompositions");
+    % Plot x1
+    subplot(5,1,1);
+    plot(tvec, xvec(n+1,:), 'k--', 'linewidth', 3); hold on;
+    plot(tvec, xvec(1,:), 'linewidth', 2); 
+    plot([tvec(1), tvec(end)], [P.xd(1) P.xd(1)], 'g:', 'linewidth', 2);
+    xlabel('Time (s)');
+    ylabel('x_1');
+    legend('Estimate', 'State', 'Desired');
+
+    % Plot x2
+    subplot(5,1,2);
+    plot(tvec, xvec(n+2,:), 'k--', 'linewidth', 3); hold on;
+    plot(tvec, xvec(2,:), 'linewidth', 2); 
+    plot([tvec(1), tvec(end)], [P.xd(2) P.xd(2)], 'g:', 'linewidth', 2);
+    xlabel('Time (s)');
+    ylabel('x_2');
+
+    % Plot x3
+    subplot(5,1,3);
+    plot(tvec, xvec(n+3,:), 'k--', 'linewidth', 3); hold on;
+    plot(tvec, xvec(3,:), 'linewidth', 2); 
+    plot([tvec(1), tvec(end)], [P.xd(3) P.xd(3)], 'g:', 'linewidth', 2);
+    xlabel('Time (s)');
+    ylabel('x_3');
+
+    % Plot x4
+    subplot(5,1,4);
+    plot(tvec, xvec(n+4,:), 'k--', 'linewidth', 3); hold on;
+    plot(tvec, xvec(4,:), 'linewidth', 2); 
+    plot([tvec(1), tvec(end)], [P.xd(4) P.xd(4)], 'g:', 'linewidth', 2);
+    xlabel('Time (s)');
+    ylabel('x_4');
+
+    % Plot x5
+    subplot(5,1,5);
+    plot(tvec, xvec(n+5,:), 'k--', 'linewidth', 3); hold on;
+    plot(tvec, xvec(5,:), 'linewidth', 2); 
+    plot([tvec(1), tvec(end)], [P.xd(5) P.xd(5)], 'g:', 'linewidth', 2);
+    xlabel('Time (s)');
+    ylabel('x_5');
+
+end
+
+function xdot = f(t,x,P)
+    % Extract states
+    n = height(P.A);
+    x_state = x(1:n);
+    x_hat = x(n+1:end);
+
+    % Calculate control
+    u = -P.K*(x_hat-P.xd) + P.uff;
+
+    % Calculate state dynamics
+    x_dot_state = P.A*x_state + P.B*u;
+
+    % Calculate measurement (y)
+    y = P.C*x_state;
+
+    % Calculate x_hat dynamics
+    x_hat_dot = P.A*x_hat + P.B*u + P.L*(y-P.C*x_hat);
+
+    % aggregate state dynamics
+    xdot = [x_dot_state; x_hat_dot];
 end
 
 function [A, B, C] = get_system()
