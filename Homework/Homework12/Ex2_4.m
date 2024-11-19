@@ -3,7 +3,8 @@ function Ex2_4
     P.B = [10.1 0; 0 -0.0086; 0.025 -0.011; 0 0];
     x0 = [10; 0.1; 0.1; 0];
     % choose Q and R
-    Q = diag(1:4); R = diag(1:2);
+    Q = diag(ones([1 height(P.A)])); 
+    R = 1000*diag(ones([1 width(P.B)])); % prioritze small control
     P.K = lqr(P.A,P.B,Q,R);
     
     % simulate system
@@ -22,6 +23,7 @@ function Ex2_4
     subplot(4,2,1); hold on;
     plot(t_vec, xmat(1,:));
     ylabel('V', 'fontsize', 12);
+    title('States');
     
     subplot(4,2,3); hold on;
     plot(t_vec, xmat(2,:));
@@ -40,6 +42,7 @@ function Ex2_4
     subplot(4,2,4); hold on;
     plot(t_vec, umat(1,:));
     ylabel('\delta_{th}', 'fontsize', 12);
+    title('Inputs');
     
     subplot(4,2,6); hold on;
     plot(t_vec, umat(2,:));
