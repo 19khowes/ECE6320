@@ -32,20 +32,26 @@ close all;
     
     % Plot the states
     figure;
-    subplot(3,1,1);
+    subplot(4,1,1);
     plot([tmat(1) tmat(end)], [P.xd(1) P.xd(1)], ':r', 'linewidth', 3); hold on;
     plot(tmat, xmat(1,:), 'b', 'linewidth', 2);
     ylabel('$\theta(t)$', 'fontsize', fontsize, 'Interpreter','latex');
     set(gca, 'fontsize', fontsize);
     
-    subplot(3,1,2);
+    subplot(4,1,2);
     plot([tmat(1) tmat(end)], [P.xd(2) P.xd(2)], 'r:', 'linewidth', 3); hold on;
     plot(tmat, xmat(2,:), 'b', 'linewidth', 3);
     ylabel('$\dot{\theta}(t)$', 'fontsize', fontsize, 'Interpreter','latex');
     set(gca, 'fontsize', fontsize);
+
+    subplot(4,1,3);
+    % plot([tmat(1) tmat(end)], [0 0], 'r:', 'linewidth', 3); hold on;
+    plot(tmat, xmat(3,:), 'b', 'linewidth', 3);
+    ylabel('$\int{\theta-\frac{\pi}{4}}(t)$', 'fontsize', fontsize, 'Interpreter','latex');
+    set(gca, 'fontsize', fontsize);
     
     % Plot the energy
-    subplot(3,1,3);
+    subplot(4,1,4);
     plot([tmat(1) tmat(end)], [P.u_ff P.u_ff], 'r:', 'linewidth', 3); hold on;
     plot(tmat, u_mat, 'b', 'linewidth', 2);
     ylabel('Torque');
@@ -53,11 +59,11 @@ close all;
     set(gca, 'fontsize', fontsize);
     
     %% Create a simulation
-    plotter = PendulumEnergyPlotter(P.l);
-    for k = 1:len
-        plotter.plot(xmat(1,k), E(k), tmat(k));
-        pause(dt/10);
-    end
+    % plotter = PendulumEnergyPlotter(P.l);
+    % for k = 1:len
+    %     plotter.plot(xmat(1,k), E(k), tmat(k));
+    %     pause(dt/10);
+    % end
 
 end
 
