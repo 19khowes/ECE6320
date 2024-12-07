@@ -4,12 +4,55 @@ function thermostat_control_simulation()
 
     %% Create system
     [A, B, C, E] = get_system();
+    n = height(A);
+    m = width(B);
         
     %% Control Design
-    x_d = [0.; 0.; 20.; 0.; 0.]; % This is definitely not correct
+    syms x1_d x2_d x4_d x5_d uff1 uff2;
+    x_d = [x1_d; x2_d; 20; x4_d; x5_d];
+    xddot = [0;0;0;0;0];
+    % uff = [uff1; uff2];
+    uff = [uff1; 0]; % uff2 is free, choose 0
+    eqn = B*uff + A*x_d - xddot == 0; % solve for uff and x_d (excpet x_d3)
+    sol = solve(eqn);
+    uff = double(subs(uff, uff1, sol.uff1));
+    x_d = double(subs(x_d, x_d, [sol.x1_d; sol.x2_d; 20; sol.x4_d; sol.x5_d]));
+    % Sanity check
+    check = B*uff + A*x_d - xddot;
+    % check controllability
+    Gamma = ctrb(A,B);
+    rGamma = rank(Gamma); % fully controllable
+    % LQR
+        % form aggregate state
+    C1 = [0 0 1 0 0];
+    C2 = [1];
+    Abar = [A zeros([n 2]); C1 0 0; 0 0 0 0 0 C2 0];
+    Bbar = [B; zeros([2 m])];
+        % pick and verify Q/R
+    Q = diag([0 0 1 0 0 (1/(20^2)) (1/(20^2))]);
+    R = diag([(1/(0.5^2)) (1/(0.5^2))]);
+    Cc = sqrt(Q);
+    checkQ = Cc'*Cc;
+    Omegac = obsv(Abar, Cc);
+    rOmegac = rank(Omegac);
+    % Create K using lqr()
+    K = lqr(Abar,Bbar,Q,R);
+    % check eigenvalues of closed loop system
+    eigclosed = eig(Abar-Bbar*K);
 
 
     %% Create the observer (Create the observer)
+    T = [eye(5); zeros([2 5])];
+    Kbar = K*T;
+    % check observability
+    Omega = obsv(A,C);
+    rOmega = rank(Omega); % completely observable
+    QL = diag(10*ones([1 n]));
+    RL = 1;
+    L = lqr(A',C',QL,RL)';
+    % check observer convergence
+    eigALC = eig(A-L*C);
+
     
     
     %% Store the values (Feel free to add any additional values here to pass into the control or dynamics functions)
@@ -19,14 +62,20 @@ function thermostat_control_simulation()
     P.E = E;
     P.n_states = 5;
     P.n_ctrl = 2;
-    P.ctrl_max = 100;    
+    P.ctrl_max = 100;   
+
+    P.uff = uff;
+    P.x_d = x_d;
+    P.K = K;
+    P.L = L;
+    P.d_nom = 10;
     
 
     %% Simulate the system (Don't change anything in this section except x0_ctrl)
     % Create the initial state
     x0_sys = [20.5; 19.; 19.; 11.; 21];
     x0_obs = [15; 15; 15; 15; 15];
-    x0_ctrl = []; % Any additional states added for control -> initialize each to zero
+    x0_ctrl = [0; 0]; % Any additional states added for control -> initialize each to zero
     x0 = [x0_sys; x0_obs; x0_ctrl];
 
     % Simulate the system throughout the entire day (86400 seconds)
@@ -102,10 +151,12 @@ function xdot = dynamics(t, x, P)
     x_sys_dot = P.A*x_sys + P.B*u + P.E*disturbance(t);
 
     % Observer dynamics (this line should use P.d_nom instead of disturbance(t))
-    x_obs_dot = zeros(size(x_obs));
+    y = P.C*x_sys; % sensor measurement (output)
+    x_obs_dot = P.A*x_obs + P.B*u + P.L*(y - P.C*x_obs) + P.E*P.d_nom; % TODO: should this have a d value in it?
 
     % Control dynamics (definitely fix this line)
-    x_ctrl_dot = zeros(size(x_ctrl));
+    x_ctrl_dot = [x_sys(3) - P.x_d(3); x_ctrl(1)];
+    % x_ctrl_dot = [0;0];
 
     xdot = [x_sys_dot; x_obs_dot; x_ctrl_dot];
 end
@@ -122,7 +173,8 @@ function u = control(x_obs, x_ctrl, P)
     %   u: The resulting control
 
     % Create the feedback control (you'll want to change this)
-    u = zeros(P.n_ctrl,1);
+    % u = zeros(P.n_ctrl,1);
+    u = P.uff - P.K*([x_obs-P.x_d; x_ctrl]);
 
     % Bound the control (leave the following two lines alone)
     u = max(u, -P.ctrl_max);
