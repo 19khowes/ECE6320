@@ -53,7 +53,8 @@ function thermostat_control_simulation()
     % check observer convergence
     eigALC = eig(A-L*C);
 
-    
+    %% Save results of design
+    save("prob1.mat", "L", "K", "x_d")
     
     %% Store the values (Feel free to add any additional values here to pass into the control or dynamics functions)
     P.A = A;
