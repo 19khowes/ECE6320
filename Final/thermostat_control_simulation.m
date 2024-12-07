@@ -100,9 +100,36 @@ function thermostat_control_simulation()
         ylabel(["x_", num2str(k)])
     end
     xlabel("Time (hr)")
-    sgtitle("States vs Time")    
+    sgtitle("States vs Time")  
+    legend('Desired', 'Observed States', 'States');
 
     % Plot other things vs time
+    % Error vs time
+    figure;
+    for k = 1:5
+        subplot(5,1,k);
+        plot(tvec/3600, x_mat(k,:)-x_d(k), 'b');
+        ylabel(["x_", num2str(k), " Error"])
+    end
+    xlabel("Time (hr)")
+    sgtitle("State Error vs Time") 
+
+    % Control vs time
+    figure;
+    for k = 1:2
+        subplot(2,1,k);
+        plot(tvec/3600, u_mat(k,:), 'b');
+        ylabel(["u_", num2str(k)])
+    end
+    xlabel("Time (hr)")
+    sgtitle("Control vs Time") 
+
+    % Disturbance vs time
+    figure;
+    plot(tvec/3600, d_vec, 'b');
+    ylabel("Disturbance")
+    xlabel("Time (hr)")
+    sgtitle("Disturbance vs Time") 
 
 end
 
